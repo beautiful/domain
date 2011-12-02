@@ -1,0 +1,34 @@
+<phpunit
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	bootstrap="phpunit.php"
+	>
+	<testsuites>
+		<testsuite name="Beautiful Domain">
+			<file>test/ObjectTest.php</file>
+			<file>test/DomainTest.php</file>
+			<file>test/FieldTest.php</file>
+			<file>test/FieldVarCharTest.php</file>
+			<file>test/FieldEmailTest.php</file>
+			<file>test/FieldPasswordTest.php</file>
+			<file>test/MapperArrayTest.php</file>
+			<file>test/MapperMongoTest.php</file>
+			<file>test/IdentityMapTest.php</file>
+			<file>test/RegistryTest.php</file>
+			<file>test/AuditTest.php</file>
+		</testsuite>
+	</testsuites>
+	<logging>
+		<log
+			type="coverage-html"
+			target="test/coverage"
+			charset="UTF-8"
+			yui="true"
+			highlight="true"
+			lowUpperBound="35"
+			highLowerBound="70"
+			/>
+	</logging>
+</phpunit>
