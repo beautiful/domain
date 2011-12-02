@@ -14,7 +14,7 @@ task :clean do |t|
   [
     File.join(COVERAGE,  '*'),
   ].each do |glob|
-  	print 'Deleting all but .gitignore in '+glob+'...'
+    print 'Deleting all but .gitignore in '+glob+'...'
     Dir.glob(glob).reject {|file| file == '.gitignore'} .each {|file| rm_rf file}
     puts ' done.'
   end
