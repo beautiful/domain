@@ -13,6 +13,35 @@
  * @license     MIT
  */
 abstract class Mapper {
+
+	protected function extract_data(Object $object)
+	{
+		$auto = $this->config('auto');
+		$key = $this->config('key');
+
+		if ($auto AND isset($object->{$key}))
+		{
+			throw new Mapper_InvalidKeyException('Cannot insert auto key.');
+		}
+		else if ( ! $auto AND ! isset($object->{$key}))
+		{
+			throw new Mapper_InvalidKeyException('No key inserted.');
+		}
+
+		$data = $object->as_array();
+
+		if ($fields = $this->config('fields'))
+		{
+			if ( ! $auto)
+			{
+				$fields[] = $key;
+			}
+
+			$data = Arr::extract($data, $fields);
+		}
+
+		return $data;
+	}
 	
 	/**
 	 * @return  mixed  the key of the newly stored Object

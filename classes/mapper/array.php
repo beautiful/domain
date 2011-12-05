@@ -45,39 +45,20 @@ class Mapper_Array extends Mapper {
 	public function insert(Object $object)
 	{
 		$key = $this->config('key');
-		$data = $object->as_array();
+		$data = $this->extract_data($object);
 
-		if (($auto = $this->config('auto')) AND isset($data[$key]))
-		{
-			throw new Exception('Cannot insert auto key.');
-		}
-
-		if ($fields = $this->config('fields'))
-		{
-			if ( ! $auto)
-			{
-				$fields[] = $key;
-			}
-
-			$data = Arr::extract($data, $fields);
-		}
-
-		if ($auto)
+		if ($this->config('auto'))
 		{
 			$key_value = count($this->rows);
 		}
-		elseif (($key_value = Arr::get($data, $key)) !== NULL)
-		{
-			// Key was set in $data
-		}
 		else
 		{
-			throw new Exception('No key inserted.');
+			$key_value = $data[$key];
 		}
-
+		
 		if (isset($this->rows[$key_value]))
 		{
-			throw new Exception('Key already exists.');
+			throw new Mapper_InvalidKeyException('Key already exists.');
 		}
 		
 		$this->rows[$key_value] = $data;
@@ -101,7 +82,7 @@ class Mapper_Array extends Mapper {
 
 		if ( ! isset($this->rows[$key]))
 		{
-			throw new Exception("Key does not exist: {$key}.");
+			throw new Mapper_InvalidKeyException("Key does not exist: {$key}.");
 		}
 
 		$this->rows[$key] = $data + $this->rows[$key];
@@ -113,7 +94,7 @@ class Mapper_Array extends Mapper {
 
 		if ( ! isset($this->rows[$key]))
 		{
-			throw new Exception('Key does not exist.');
+			throw new Mapper_InvalidKeyException('Key does not exist.');
 		}
 
 		unset($this->rows[$key]);

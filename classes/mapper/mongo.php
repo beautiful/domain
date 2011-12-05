@@ -57,32 +57,39 @@ class Mapper_Mongo extends Mapper {
 	
 	public function insert(Object $object)
 	{
-		$data = $object->as_array();
-
-		if (isset($data[$this->config('key')]))
-		{
-			throw new Exception('Cannot insert auto key.');
-		}
+		$data = $this->extract_data($object);
+		$key = $this->config('key');
 
 		$this->collection()->insert($data);
 		$object->load_array($data);
-		return $data[$this->config('key')];
+		return $data[$key];
 	}
 
 	public function update(Object $object)
 	{
 		$data = $object->as_array();
-		$where = Arr::extract($data, array($this->config('key')));
+		$key = $this->config('key');
+		$where = Arr::extract($data, array($key));
+
+		if ($this->collection()->count($where) !== 1)
+		{
+			throw new Mapper_InvalidKeyException('Key does not exist: '.$data[$key]);
+		}
+
 		$this->collection()->update($where, $data);
 	}
 
 	public function delete(Object $object)
 	{
-		// Safeguard
-		$options = array('justOne' => TRUE);
+		$key = $this->config('key');
+		$where = Arr::extract($object->as_array(), array($key));
 
-		$where = Arr::extract($object->as_array(), $this->config('key'));
-		$this->collection()->remove($where, $options);
+		if ($this->collection()->count($where) !== 1)
+		{
+			throw new Mapper_InvalidKeyException('Key does not exist: '.$object->{$key});
+		}
+
+		$this->collection()->remove($where, array('justOne' => TRUE));
 	}
 
 	public function find($where, $limit = NULL)
@@ -94,7 +101,7 @@ class Mapper_Mongo extends Mapper {
 
 		$cursor = $this->collection()->find($where);
 
-		return new Object_MongoCursor_Collection($cursor);
+		return new Object_Iterable_Collection($cursor);
 	}
 
 	public function find_one($where)
