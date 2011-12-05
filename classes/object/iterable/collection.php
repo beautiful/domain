@@ -3,7 +3,7 @@
  * Describe an iterable collection of objects
  * 
  * In order to iterate a result set from [Mapper_Mongo] we use
- * an [Object_MongoCursor_Collection].
+ * an [Object_Iterable_Collection].
  * 
  * @package     Beautiful
  * @subpackage  Beautiful Domain
@@ -12,7 +12,7 @@
  * @copyright   Luke Morton, 2011
  * @license     MIT
  */
-class Object_MongoCursor_Collection extends Object_Collection {
+class Object_Iterable_Collection extends Object_Collection {
 	
 	public function current()
 	{
@@ -22,13 +22,13 @@ class Object_MongoCursor_Collection extends Object_Collection {
 	public function offsetExists($key)
 	{
 		throw new Exception(
-			'Object_MongoCursor_Collection::offsetExists() not implemented');
+			'Object_Iterable_Collection::offsetExists() not implemented');
 	}
 	
 	public function offsetGet($key)
 	{
 		throw new Exception(
-			'Object_MongoCursor_Collection::offsetGet() not implemented');
+			'Object_Iterable_Collection::offsetGet() not implemented');
 	}
 
 	public function key()
