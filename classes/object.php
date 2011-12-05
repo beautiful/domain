@@ -36,6 +36,11 @@ class Object {
 		return $this->data;
 	}
 
+	public function __isset($field)
+	{
+		return isset($this->data[$field]);
+	}
+
 	public function __get($field)
 	{
 		if (array_key_exists($field, $this->data))
