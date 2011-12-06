@@ -21,8 +21,7 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 			),
 			array(
 				array('id' => 0, 'name' => 'Luke'),
-				array('id' => 1, 'name' => 'Bob'),
-				array('id' => 2, 'name' => 'Peter'),
+				array('id' => 1, 'name' => 'Peter'),
 			));
 	}
 
@@ -43,11 +42,12 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @depends            testInsertAuto
-	 * @expectedException  Exception
+	 * @expectedException  Mapper_InvalidKeyException
 	 */
 	public function testInsertThrowsAutoKeyException($mapper)
 	{
 		$mapper->insert(new Object(array($mapper->config('key') => 1)));
+		exit;
 	}
 
 	/**
@@ -82,7 +82,7 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @depends            testInsertNonAuto
-	 * @expectedException  Exception
+	 * @expectedException  Mapper_InvalidKeyException
 	 */
 	public function testInsertNonAutoRequiresID($mapper)
 	{
@@ -91,9 +91,9 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * @depends            testInsertNonAuto
-	 * @expectedException  Exception
+	 * @expectedException  Mapper_InvalidKeyException
 	 */
-	public function testInsertThrowsDuplicateKeyException($mapper)
+	public function testInsertThrowsInvalidKey($mapper)
 	{
 		$mapper->insert(new Object(array('id' => 0)));
 	}
@@ -167,9 +167,10 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @depends  testFindOneNone
 	 */
-	public function testUpdateWithID($mapper)
+	public function testUpdate($mapper)
 	{
-		$object = $mapper->find_one(array('name' => 'David'));
+		$object = $mapper->find_one(array('name' => 'Luke'));
+
 		$object->name = 'Bob';
 		$mapper->update($object);
 
@@ -180,33 +181,33 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends            testUpdateWithID
-	 * @expectedException  Exception
+	 * @depends            testUpdate
+	 * @expectedException  Mapper_InvalidKeyException
 	 */
-	public function testUpdateThrowsDoesNotExistException($mapper)
+	public function testUpdateThrowsInvalidKey($mapper)
 	{
-		$mapper->update(new Object(array('id' => 100, 'name' => 'Bobby')));
+		$mapper->update(new Object(array($mapper->config('key') => 100, 'name' => 'Bobby')));
 	}
 
 	/**
-	 * @depends  testFindOneNone
+	 * @depends  testUpdate
 	 */
 	public function testDelete($mapper)
 	{
 		$object = $mapper->find_one(array('name' => 'Bob'));
 		$mapper->delete($object);
 		$data = current($mapper->as_array());
-		$this->assertNotSame('Bob', $data->name);
+		$this->assertNotSame('Bob', $data['name']);
 		return $mapper;
 	}
 
 	/**
 	 * @depends            testDelete
-	 * @expectedException  Exception
+	 * @expectedException  Mapper_InvalidKeyException
 	 */
-	public function testDeleteThrowsDoesNotExist($mapper)
+	public function testDeleteThrowsInvalidKey($mapper)
 	{
-		$mapper->delete(new Object(array('id' => 200)));
+		$mapper->delete(new Object(array($mapper->config('key') => 200)));
 	}
 
 }

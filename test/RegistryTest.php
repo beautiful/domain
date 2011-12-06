@@ -51,6 +51,14 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * @depends  testConstruct
+	 */
+	public function testFindOneReturnsNull($registry)
+	{
+		$user = $registry->find_one('Model_User', 50);
+		$this->assertNull($user);
+	}
+
 	/**
 	 * @depends  testConstruct
 	 */

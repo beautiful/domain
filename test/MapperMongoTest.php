@@ -12,9 +12,26 @@
  */
 class MapperMongoTest extends MapperArrayTest {
 
+	protected static function config()
+	{
+		return array(
+			'server'     => 'mongodb://localhost',
+			'db'         => 'test',
+			'collection' => 'test',
+		);
+	}
+
+	public static function setUpBeforeClass()
+	{
+		$config = static::config();
+		$connection = new Mongo(Arr::get($config, 'server'));
+		$connection->selectDB(Arr::get($config, 'db'))->drop();
+	}
+
+
 	public function testInstance()
 	{
-		return new Mapper_Mongo(array('collection' => 'test'));
+		return new Mapper_Mongo(static::config());
 	}
 
 	/**
@@ -33,28 +50,15 @@ class MapperMongoTest extends MapperArrayTest {
 		return $mapper;
 	}
 
-	/**
-	 * @depends  testFindNone
-	 */
-	public function testFindOneWithID($mapper)
-	{
-		$this->markTestIncomplete();
-		$this->assertSame(
-			array('name' => 'Bobby', 'id' => 1),
-			$mapper->find_one(1)->as_array());
-		return $mapper;
-	}
-
 	public function testInsertNonAuto()
 	{
-		$this->markTestIncomplete();
 		$mapper = new Mapper_Mongo(
 			array(
 				'collection'  => 'test',
 				'auto'        => FALSE,
 			));
 
-		$expected = array('name' => 'Luke', 'id' => 0);
+		$expected = array('_id' => 0, 'name' => 'Luke');
 		$id = $mapper->insert(new Object($expected));
 		$rows = $mapper->as_array();
 		$this->assertSame($expected, $rows[$id]);
