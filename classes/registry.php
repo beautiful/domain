@@ -49,8 +49,16 @@ class Registry {
 			return $domain;
 		}
 
+		$object = $this->mapper()->find_one($id);
+
+		if ($domain = $this->identities()->get(
+				$object->{$this->mapper()->config('key')}))
+		{
+			return $domain;
+		}
+
 		$domain = new $class;
-		$domain->__object($this->mapper()->find_one($id));
+		$domain->__object($object);
 
 		$this->identities()->set($domain);
 
