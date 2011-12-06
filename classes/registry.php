@@ -30,7 +30,8 @@ class Registry {
 	{
 		if ($this->identities === NULL)
 		{
-			$this->identities = new IdentityMap;
+			$this->identities = new IdentityMap(
+				$this->mapper()->config('key'));
 		}
 
 		return $this->identities;
