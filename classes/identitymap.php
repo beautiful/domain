@@ -19,9 +19,9 @@ class IdentityMap {
 
 	protected $id = 'id';
 
-	public function __construct($id)
+	public function __construct($id = NULL)
 	{
-		if (isset($id))
+		if ($id !== NULL)
 		{
 			$this->id = $id;
 		}
