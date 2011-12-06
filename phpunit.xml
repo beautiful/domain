@@ -39,5 +39,14 @@
 			lowUpperBound="35"
 			highLowerBound="70"
 			/>
+		<log
+			type="coverage-clover"
+			target="test/coverage.xml"
+			/>	 
+		<log
+			type="junit"
+			target="test/junit.xml"
+			logIncompleteSkipped="false"
+			/>
 	</logging>
 </phpunit>
