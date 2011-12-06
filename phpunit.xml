@@ -24,6 +24,11 @@
 			<file>test/AuditTest.php</file>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">classes</directory>
+		</whitelist>
+	</filter>
 	<logging>
 		<log
 			type="coverage-html"
