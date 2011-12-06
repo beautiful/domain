@@ -17,10 +17,25 @@ class IdentityMap {
 
 	protected $identities = array();
 
+	protected $id = 'id';
+
+	public function __construct($id)
+	{
+		if (isset($id))
+		{
+			$this->id = $id;
+		}
+	}
+
+	protected function id()
+	{
+		return $this->id;
+	}
+
 	protected function extract_identity(Domain $domain)
 	{
-		$id = $domain->__object()->id;
-		return $id;
+		$id = $domain->__object()->{$this->id()};
+		return (string) $id;
 	}
 
 	public function has(Domain $domain)
@@ -36,7 +51,7 @@ class IdentityMap {
 	public function set(Domain $domain)
 	{
 		$id = $this->extract_identity($domain);
-		$this->identities[(string) $id] = $domain;
+		$this->identities[$id] = $domain;
 	}
 
 }
