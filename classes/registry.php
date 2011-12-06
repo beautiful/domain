@@ -49,7 +49,10 @@ class Registry {
 			return $domain;
 		}
 
-		$object = $this->mapper()->find_one($id);
+		if (($object = $this->mapper()->find_one($id)) === NULL)
+		{
+			return $object;
+		}
 
 		if ($domain = $this->identities()->get(
 				$object->{$this->mapper()->config('key')}))

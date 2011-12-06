@@ -51,6 +51,20 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	/**
+	 * @depends  testConstruct
+	 */
+	public function testFindOneReturnsExistingObject($registry)
+	{
+		$expected_user = new Model_User;
+		$expected_user->name('Francis');
+		$registry->persist($expected_user);
+
+		$user = $registry->find_one('Model_User', array('name' => 'Francis'));
+		$this->assertSame($expected_user, $user);
+	}
+
+	/**
 	 * @depends  testFindOne
 	 */
 	public function testUpdate($registry_user)
