@@ -46,18 +46,9 @@ class Model_User extends Domain {
 
 }
 
-class Mapper_Mock extends Mapper {
-	
-	public function insert(Object $object) {}
-	public function update(Object $object) {}
-	public function delete(Object $object) {}
-	public function find($where, $limit = NULL) {}
-	public function find_one($where) {}
-
-}
-
 class Registry_Mock extends Registry {
 	
+	// Making ::mapper() public for introspection
 	public function mapper()
 	{
 		return parent::mapper();
