@@ -12,48 +12,48 @@
  * @copyright   Luke Morton, 2011
  * @license     MIT
  */
-class Object_Iterable_Collection extends Object_Collection {
+class Collection_Iterable extends Collection {
 	
 	public function current()
 	{
-		return new Object($this->collection->current());
+		return $this->collection()->current();
 	}
 
 	public function offsetExists($key)
 	{
 		throw new Exception(
-			'Object_Iterable_Collection::offsetExists() not implemented');
+			'Collection_Object_Iterable::offsetExists() not implemented');
 	}
 	
 	public function offsetGet($key)
 	{
 		throw new Exception(
-			'Object_Iterable_Collection::offsetGet() not implemented');
+			'Collection_Object_Iterable::offsetGet() not implemented');
 	}
 
 	public function key()
 	{
-		return $this->collection->key();
+		return $this->collection()->key();
 	}
 
 	public function next()
 	{
-		$this->collection->next();
+		$this->collection()->next();
 	}
 
 	public function valid()
 	{
-		return $this->collection->valid();
+		return $this->collection()->valid();
 	}
 
 	public function rewind()
 	{
-		$this->collection->rewind();
+		$this->collection()->rewind();
 	}
 
 	public function count()
 	{
-		return $this->collection->count();
+		return $this->collection()->count();
 	}
 
 }

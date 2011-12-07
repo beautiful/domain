@@ -1,6 +1,6 @@
 <?php
 /**
- * Test an iterable collection
+ * Test an iterable object collection
  * 
  * @package     Beautiful
  * @subpackage  Beautiful Domain
@@ -11,11 +11,11 @@
  * @copyright   Luke Morton, 2011
  * @license     MIT
  */
-class ObjectIterableCollectionTest extends CollectionTest {
+class CollectionObjectTest extends CollectionTest {
 
 	public function testConstruct()
 	{
-		return new Object_Iterable_Collection(
+		return new Collection_Object(
 			new Collection(array(
 				array('id' => 1),
 				array('id' => 2),
@@ -38,6 +38,15 @@ class ObjectIterableCollectionTest extends CollectionTest {
 	public function testOffsetIsset($collection)
 	{
 		$this->assertTrue(isset($collection[1]));
+	}
+
+	/**
+	 * @depends  testConstruct
+	 */
+	public function testCurrent($collection)
+	{
+		$this->assertInstanceOf('Object', $collection->current());
+		return $collection;
 	}
 
 }
