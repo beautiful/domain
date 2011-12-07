@@ -16,7 +16,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	{
 		return new Registry_Mock(
 			new Mapper_Array(
-				array('table' => 'test'),
+				NULL,
 				array(
 					array('id' => 0, 'name' => 'Luke', 'automobile' => 'Ford Fiesta'),
 					array('id' => 1, 'name' => 'Dan', 'automobile' => 'Ford Fiesta'),
@@ -31,12 +31,43 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	{
 		$user = new Model_User;
 		$user->name('Bob');
+		$user->car('BMW');
 		$registry->persist($user);
 
 		$rows = $registry->mapper()->as_array();
 		$this->assertSame(
 			$user->__object()->as_array(),
 			end($rows));
+	}
+
+	/**
+	 * @depends  testConstruct
+	 */
+	public function testFind($registry)
+	{
+		$users = $registry->find('Model_User', array('automobile' => 'Ford Fiesta'));
+		$this->assertInstanceOf('Collection_Domain', $users);
+		return $users;
+	}
+
+	/**
+	 * @depends  testConstruct
+	 */
+	public function testFindReturnsEmptyCollectionDomain($registry)
+	{
+		$users = $registry->find('Model_User', array('id' => 50));
+		$this->assertInstanceOf('Collection_Domain', $users);
+		$this->assertSame(0, $users->count());
+	}
+
+	/**
+	 * @depends  testFind
+	 */
+	public function testFindFurther($users)
+	{
+		$user = $users->current();
+		$this->assertInstanceOf('Model_User', $user);
+		$this->assertSame('Luke', $user->name());
 	}
 
 	/**

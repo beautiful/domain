@@ -42,14 +42,20 @@ class Registry {
 		return $this->mapper;
 	}
 
-	public function find_one($class, $id)
+	public function find($class, array $where = NULL)
 	{
-		if ($domain = $this->identities()->get($id))
+		$collection = $this->mapper()->find($where);
+		return new Collection_Domain($collection, $this->identities(), $class);
+	}
+
+	public function find_one($class, $where)
+	{
+		if ($domain = $this->identities()->get($where))
 		{
 			return $domain;
 		}
 
-		if (($object = $this->mapper()->find_one($id)) === NULL)
+		if (($object = $this->mapper()->find_one($where)) === NULL)
 		{
 			return $object;
 		}
