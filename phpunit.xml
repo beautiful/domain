@@ -9,7 +9,9 @@
 		<testsuite name="Beautiful Domain">
 			<file>test/ObjectTest.php</file>
 			<file>test/CollectionTest.php</file>
-			<file>test/ObjectIterableCollectionTest.php</file>
+			<file>test/CollectionIterableTest.php</file>
+			<file>test/CollectionObjectTest.php</file>
+			<file>test/CollectionDomainTest.php</file>
 			<file>test/DomainTest.php</file>
 			<file>test/FieldTest.php</file>
 			<file>test/FieldVarCharTest.php</file>
