@@ -40,7 +40,8 @@ class MapperMongoTest extends MapperArrayTest {
 	public function testFindWithID($mapper)
 	{
 		$this->markTestIncomplete();
-		$objects = $mapper->find(new MongoID(''));
+		$id = $mapper->find()->current();
+		$objects = $mapper->find($id);
 
 		$this->assertTrue(is_array($objects));
 		$this->assertSame(

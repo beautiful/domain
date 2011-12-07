@@ -20,15 +20,18 @@ class Mapper_Array extends Mapper {
 	protected $rows = NULL;
 
 	protected $config = array(
-		'table'  => NULL,
 		'key'    => 'id',
 		'auto'   => TRUE,
 		'fields' => array(),
 	);
 
-	public function __construct(array $config, array $rows = array())
+	public function __construct(array $config = NULL, array $rows = array())
 	{
-		$this->config = $config + $this->config;
+		if ($config !== NULL)
+		{
+			$this->config = $config + $this->config;	
+		}
+		
 		$this->rows = $rows;
 	}
 
@@ -102,11 +105,6 @@ class Mapper_Array extends Mapper {
 
 	protected function each_where($where, $callback)
 	{
-		if ( ! is_array($where))
-		{
-			$where = array($this->config('key') => $where);
-		}
-
 		foreach ($this->rows as $_key => $_row)
 		{
 			foreach ($where as $_field => $_value)
@@ -124,26 +122,43 @@ class Mapper_Array extends Mapper {
 		}
 	}
 
-	public function find($where, $limit = NULL)
+	public function find(array $where = NULL, $limit = NULL)
 	{
-		$found = array();
-
-		$rows = $this->rows;
-		$this->each_where($where, function ($key) use ($rows, & $found, $limit)
+		if ($where === NULL)
 		{
-			$found[$key] = $rows[$key];
+			$found = $this->rows;
 
-			if (count($found) === $limit)
+			if ($limit)
 			{
-				return FALSE;
+				$found = array_slice($found, 0, $limit);
 			}
-		});
+		}
+		else
+		{
+			$found = array();
 
-		return new Object_Collection(array_values($found));
+			$rows = $this->rows;
+			$this->each_where($where, function ($key) use ($rows, & $found, $limit)
+			{
+				$found[$key] = $rows[$key];
+
+				if (count($found) === $limit)
+				{
+					return FALSE;
+				}
+			});
+		}
+
+		return new Collection_Object(new Collection(array_values($found)));
 	}
 
 	public function find_one($where)
 	{
+		if ( ! is_array($where))
+		{
+			$where = array($this->config('key') => $where);
+		}
+		
 		if (($rows = $this->find($where, 1)) AND $rows->valid())
 		{
 			return $rows->current();

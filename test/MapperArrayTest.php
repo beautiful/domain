@@ -16,7 +16,6 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	{
 		return new Mapper_Array(
 			array(
-				'table'  => 'test',
 				'fields' => array('name'),
 			),
 			array(
@@ -67,7 +66,6 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	{
 		$mapper = new Mapper_Array(
 			array(
-				'table'  => 'test',
 				'fields' => array('name'),
 				'auto'   => FALSE,
 			));
@@ -101,10 +99,10 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @depends  testInsertAuto
 	 */
-	public function testFindWithID($mapper)
+	public function testFindWithArray($mapper)
 	{
-		$collection = $mapper->find(0);
-		$this->assertInstanceOf('Object_Collection', $collection);
+		$collection = $mapper->find(array('name' => 'Luke'));
+		$this->assertInstanceOf('Collection_Object', $collection);
 
 		$object = $collection->current();
 		$this->assertSame('Luke', $object->name);
@@ -115,13 +113,27 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @depends  testInsertAuto
 	 */
-	public function testFindWithArray($mapper)
+	public function testFindAll($mapper)
 	{
-		$collection = $mapper->find(array('name' => 'Luke'));
-		$this->assertInstanceOf('Object_Collection', $collection);
+		$collection = $mapper->find();
+		$this->assertInstanceOf('Collection_Object', $collection);
+		return $mapper;
+	}
 
-		$object = $collection->current();
-		$this->assertSame('Luke', $object->name);
+	/**
+	 * @depends  testInsertAuto
+	 */
+	public function testFindAllWithLimit($mapper)
+	{
+		$collection = $mapper->find(NULL, 2);
+		$this->assertInstanceOf('Collection_Object', $collection);
+	
+		$count = 0;
+		foreach ($collection as $_domain)
+		{
+			++$count;
+		}
+		$this->assertSame(2, $count);
 
 		return $mapper;
 	}
@@ -131,8 +143,8 @@ class MapperArrayTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testFindNone($mapper)
 	{
-		$collection = $mapper->find(50);
-		$this->assertInstanceOf('Object_Collection', $collection);
+		$collection = $mapper->find(array('name' => 'Zed'));
+		$this->assertInstanceOf('Collection_Object', $collection);
 		$this->assertSame(0, $collection->count());
 		return $mapper;
 	}

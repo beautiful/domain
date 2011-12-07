@@ -92,16 +92,23 @@ class Mapper_Mongo extends Mapper {
 		$this->collection()->remove($where, array('justOne' => TRUE));
 	}
 
-	public function find($where, $limit = NULL)
+	public function find(array $where = NULL, $limit = NULL)
 	{
-		if ( ! is_array($where))
+		if ($where === NULL)
 		{
-			$where = array($this->config('key') => $where);
+			$cursor = $this->collection()->find();
+		}
+		else
+		{
+			$cursor = $this->collection()->find($where);
 		}
 
-		$cursor = $this->collection()->find($where);
+		if ($limit !== NULL)
+		{
+			$cursor->limit($limit);
+		}
 
-		return new Object_Iterable_Collection($cursor);
+		return new Collection_Object($cursor);
 	}
 
 	public function find_one($where)

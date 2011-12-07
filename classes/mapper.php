@@ -61,11 +61,17 @@ abstract class Mapper {
 	abstract public function delete(Object $object);
 
 	/**
-	 * @return  Cursor
+	 * Find all records or where 'field' => 'value'. Can have
+	 * a limit as the second parameter however this defaults
+	 * to NULL.
+	 *
+	 * @return  Collection_Object
 	 */
-	abstract public function find($where, $limit = 1);
+	abstract public function find(array $where = NULL, $limit = NULL);
 	
 	/**
+	 * Find one record using ID or where 'field' => 'value'
+	 *
 	 * @return  Object
 	 */
 	abstract public function find_one($where);
