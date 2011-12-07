@@ -23,6 +23,16 @@ class Collection implements ArrayAccess, Iterator, Countable {
 		$this->rewind();
 	}
 
+	public function collection()
+	{
+		return $this->collection;
+	}
+
+	public function as_array()
+	{
+		return iterator_to_array($this);
+	}
+
 	public function offsetExists($key)
 	{
 		return isset($this->collection[$key]);

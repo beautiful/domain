@@ -12,14 +12,11 @@
  */
 class CollectionTest extends PHPUnit_Framework_TestCase {
 
-	protected $first;
-	protected $second;
-
 	public function testConstruct()
 	{
 		return new Collection(array(
-			new Object,
-			new Object,
+			array('id' => 1),
+			array('id' => 2),
 		));
 	}
 
@@ -28,7 +25,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testOffsetGet($collection)
 	{
-		$this->assertInstanceOf('Object', $collection[0]);
+		$this->assertSame(array('id' => 1), $collection[0]);
 	}
 
 	/**
@@ -45,7 +42,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testOffsetSet($collection)
 	{
-		$collection[2] = new Object;
+		$collection[2] = array('id' => 2);
 	}
 
 	/**
@@ -62,7 +59,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testCurrent($collection)
 	{
-		$this->assertInstanceOf('Object', $collection->current());
+		$this->assertSame(array('id' => 1), $collection->current());
 		return $collection;
 	}
 
@@ -112,6 +109,15 @@ class CollectionTest extends PHPUnit_Framework_TestCase {
 	public function testCount($collection)
 	{
 		$this->assertSame(2, $collection->count());
+		return $collection;
+	}
+
+	/**
+	 * @depends  testCount
+	 */
+	public function testAsArray($collection)
+	{
+		$this->assertTrue(is_array($collection->as_array()));
 		return $collection;
 	}
 
