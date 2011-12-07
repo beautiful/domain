@@ -32,10 +32,14 @@ class IdentityMap {
 		return $this->id;
 	}
 
+	protected function extract_identity_from_object(Object $object)
+	{
+		return (string) $object->{$this->id()};
+	}
+
 	protected function extract_identity(Domain $domain)
 	{
-		$id = $domain->__object()->{$this->id()};
-		return (string) $id;
+		return $this->extract_identity_from_object($domain->__object());
 	}
 
 	public function has(Domain $domain)
@@ -45,6 +49,11 @@ class IdentityMap {
 	
 	public function get($id)
 	{
+		if ($id instanceOf Object)
+		{
+			$id = $this->extract_identity_from_object($id);
+		}
+		
 		return Arr::get($this->identities, (string) $id);
 	}
 
