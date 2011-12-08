@@ -44,6 +44,11 @@ class Mapper_Array extends Mapper {
 	{
 		return Arr::get($this->config, $key);
 	}
+
+	public function table()
+	{
+		return $this->config('table');
+	}
 	
 	public function insert(Object $object)
 	{

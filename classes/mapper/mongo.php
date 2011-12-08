@@ -38,6 +38,11 @@ class Mapper_Mongo extends Mapper {
 		return Arr::get($this->config, $key);
 	}
 
+	public function table()
+	{
+		return $this->config('collection');
+	}
+
 	protected function collection()
 	{
 		if ($this->collection === NULL)

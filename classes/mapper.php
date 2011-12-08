@@ -42,6 +42,8 @@ abstract class Mapper {
 
 		return $data;
 	}
+
+	abstract public function table();
 	
 	/**
 	 * @return  mixed  the key of the newly stored Object
