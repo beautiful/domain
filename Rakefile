@@ -31,6 +31,8 @@ task :inspect do
 
   puts ''
   
+  puts " - #{metrics['ncloc']} non-commented lines of code"
+
   print " - #{metrics['classes']} classes with "
   print "#{metrics['methods']} methods ("
   print sprintf('%d', metrics['methods'].to_f / metrics['classes'].to_f)
