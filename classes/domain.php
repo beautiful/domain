@@ -52,12 +52,7 @@ class Domain {
 		{
 			$field_name = $_field->name();
 
-			if (($accessor = $_field->accessor()) === TRUE)
-			{
-				$accessor = $field_name;
-			}
-
-			if ($accessor !== $method)
+			if (($accessor = $_field->accessor()) !== $method)
 			{
 				continue;
 			}

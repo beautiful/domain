@@ -26,7 +26,13 @@ abstract class Field {
 	public function __construct($name, array $config = NULL)
 	{
 		$this->name = $name;
-		$this->accessor = Arr::get($config, 'accessor', FALSE);
+
+		if (($accessor = Arr::get($config, 'accessor', FALSE)) === TRUE)
+		{
+			$accessor = $name;
+		}
+		$this->accessor = $accessor;
+
 		$this->rules    = Arr::get($config, 'rules',    array());
 		$this->filters  = Arr::get($config, 'filters',  array());
 	}
