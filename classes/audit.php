@@ -16,11 +16,11 @@
  */
 class Audit extends Validation {
 	
-	public function __construct(Domain $model)
+	public function __construct(Domain $domain)
 	{
-		parent::__construct($model->__object()->as_array());
+		parent::__construct($domain->__object()->as_array());
 
-		foreach ($model::fields() as $_field)
+		foreach ($domain::fields() as $_field)
 		{
 			$this->rules($_field->name(), $_field->rules());
 		}
