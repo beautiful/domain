@@ -28,7 +28,15 @@ abstract class Mapper {
 			throw new Mapper_InvalidKeyException('No key inserted.');
 		}
 
-		$data = $object->as_array();
+		$data = array();
+
+		foreach ($object->as_array() as $_field => $_value)
+		{
+			if ( ! $_value instanceOf Domain)
+			{
+				$data[$_field] = $_value;
+			}
+		}
 
 		if ($fields = $this->config('fields'))
 		{
