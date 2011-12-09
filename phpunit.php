@@ -49,9 +49,9 @@ class Model_User extends Domain {
 class Registry_Mock extends Registry {
 	
 	// Making ::mapper() public for introspection
-	public function mapper()
+	public function mapper($class = NULL)
 	{
-		return parent::mapper();
+		return parent::mapper($class);
 	}
 
 }
