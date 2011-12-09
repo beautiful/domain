@@ -64,9 +64,10 @@ class Mapper_Mongo extends Mapper {
 	{
 		$data = $this->extract_data($object);
 		$key = $this->config('key');
-
+		
 		$this->collection()->insert($data);
-		$object->load_array($data);
+		
+		$object->{$key} = $data['_id'];
 		return $data[$key];
 	}
 
@@ -91,7 +92,8 @@ class Mapper_Mongo extends Mapper {
 
 		if ($this->collection()->count($where) !== 1)
 		{
-			throw new Mapper_InvalidKeyException('Key does not exist: '.$object->{$key});
+			throw new Mapper_InvalidKeyException(
+				'Key does not exist: '.$object->{$key});
 		}
 
 		$this->collection()->remove($where, array('justOne' => TRUE));
