@@ -17,81 +17,154 @@
  */
 class Registry {
 
-	protected $identities;
+	protected $identities = array();
 
 	protected $mapper;
 
-	public function __construct(Mapper $mapper)
+	public function __construct($mapper)
 	{
 		$this->mapper = $mapper;
 	}
 
-	protected function identities()
+	protected function identities($domain = NULL)
 	{
-		if ($this->identities === NULL)
+		if ($domain instanceOf Domain)
 		{
-			$this->identities = new IdentityMap(
-				$this->mapper()->config('key'));
+			$domain = get_class($domain);
 		}
 
-		return $this->identities;
+		if ( ! isset($this->identities[$domain]))
+		{
+			$this->identities[$domain] = new IdentityMap(
+				$this->mapper($domain)->config('key'));
+		}
+
+		return $this->identities[$domain];
 	}
 
-	protected function mapper()
+	protected function mapper($domain = NULL)
 	{
+		if (is_array($this->mapper))
+		{
+			if ($domain instanceOf Domain)
+			{
+				$domain = get_class($domain);
+			}
+
+			return $this->mapper[$domain];
+		}
+
 		return $this->mapper;
 	}
 
 	public function find($class, array $where = NULL)
 	{
-		$collection = $this->mapper()->find($where);
-		return new Collection_Domain($collection, $this->identities(), $class);
+		$collection = $this->mapper($class)->find($where);
+		return new Collection_Domain($collection, $this->identities($class), $class);
 	}
 
 	public function find_one($class, $where)
 	{
-		if ($domain = $this->identities()->get($where))
+		$mapper = $this->mapper($class);
+
+		if ( ! is_array($where)
+			AND $domain = $this->identities($class)->get($where))
 		{
 			return $domain;
 		}
 
-		if (($object = $this->mapper()->find_one($where)) === NULL)
+		if (($object = $mapper->find_one($where)) === NULL)
 		{
 			return $object;
 		}
 
-		if ($domain = $this->identities()->get(
-				$object->{$this->mapper()->config('key')}))
+		if ($domain = $this->identities($class)->get(
+				$object->{$mapper->config('key')}))
 		{
 			return $domain;
 		}
 
+
 		$domain = new $class;
 		$domain->__object($object);
 
-		$this->identities()->set($domain);
+		foreach ($domain::fields() as $_field)
+		{
+			if ($_field instanceOf Relationship_HasOne)
+			{
+				$relation_class = $_field->domain();
+				$relation_mapper = $this->mapper($relation_class);
+				$relation = new $relation_class;
+
+				$id = $domain->__object()->{$mapper->config('key')};
+				$foreign_key = $mapper->table().'_'.$relation_mapper->config('key');
+
+				$domain->__object()->{$_field->name()} =
+					$this->find_one($relation_class, array($foreign_key => $id));
+			}
+		}
+
+		$this->identities($class)->set($domain);
 
 		return $domain;
 	}
 
 	public function persist(Domain $domain)
 	{
-		if ($this->identities()->has($domain))
+		$object = $domain->__object();
+
+		if ($this->identities($domain)->has($domain))
 		{
-			$this->mapper()->update($domain->__object());
-			return;
+			$this->mapper($domain)->update($object);
+		}
+		else
+		{
+			$this->mapper($domain)->insert($object);
+			$this->identities($domain)->set($domain);
 		}
 
-		$this->mapper()->insert($domain->__object());
+		$this->persist_relations($domain);
+	}
 
-		$this->identities()->set($domain);
+	protected function extract_relations(Domain $domain)
+	{
+		$relations = array();
+
+		foreach ($domain::fields() as $_field)
+		{
+			if ($_field instanceOf Relationship)
+			{
+				$relations[] = array($_field, $domain->__object()->{$_field->name()});
+			}
+		}
+
+		return $relations;
+	}
+
+	protected function persist_relations(Domain $domain)
+	{
+		foreach ($this->extract_relations($domain) as $_relation)
+		{
+			list($field, $relation) = $_relation;
+
+			if ($field instanceOf Relationship_HasOne)
+			{
+				$mapper = $this->mapper($domain);
+				$relation_mapper = $this->mapper($relation);
+
+				$id = $domain->__object()->{$mapper->config('key')};
+				$foreign_key = $mapper->table().'_'.$relation_mapper->config('key');
+				$relation->__object()->{$foreign_key} = $id;
+			}
+
+			$this->persist($relation);
+		}
 	}
 
 	public function delete($domain, $id = NULL)
 	{
 		if (is_string($domain))
 		{
-			// Find and delete
 			$this->delete($this->find_one($domain, $id));
 		}
 		else if ($domain instanceof Domain)
@@ -101,7 +174,8 @@ class Registry {
 		}
 		else
 		{
-			throw new InvalidArgumentException('$domain must be string or Domain');
+			throw new InvalidArgumentException(
+				'$domain must be string or Domain');
 		}
 	}
 
