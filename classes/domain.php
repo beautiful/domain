@@ -43,15 +43,13 @@ class Domain {
 			}
 
 			$value = Arr::get($args, 0);
-
-			if ($_field instanceOf Field)
-			{
-				return $object->accessor($_field, $value);
-			}
-			else if ($_field instanceOf Relationship)
+ 
+			if ($_field instanceOf Relationship)
 			{
 				return $object->relation($_field, $value);
 			}
+
+			return $object->accessor($_field->name(), $value);
 		}
 		
 		throw new BadMethodCallException("No method {$method}");
