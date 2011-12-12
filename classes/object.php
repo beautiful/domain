@@ -67,7 +67,7 @@ class Object {
 
 	public function relation(Relationship $relationship, Domain $domain = NULL)
 	{
-		$field = $relationship->accessor();
+		$field = $relationship->name();
 
 		if ($domain !== NULL)
 		{
