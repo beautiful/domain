@@ -22,7 +22,10 @@ class Audit extends Validation {
 
 		foreach ($domain::fields() as $_field)
 		{
-			$this->rules($_field->name(), $_field->rules());
+			if ($_field instanceOf Field)
+			{
+				$this->rules($_field->name(), $_field->rules());	
+			}
 		}
 	}
 
