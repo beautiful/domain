@@ -19,6 +19,7 @@
 			<file>test/FieldPasswordTest.php</file>
 			<file>test/FieldIntTest.php</file>
 			<file>test/FieldBlobTest.php</file>
+			<file>test/MapperTest.php</file>
 			<file>test/MapperArrayTest.php</file>
 			<file>test/MapperMongoTest.php</file>
 			<file>test/IdentityMapTest.php</file>

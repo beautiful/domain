@@ -10,7 +10,9 @@
  * @copyright   Luke Morton, 2011
  * @license     MIT
  */
-class MapperMongoTest extends MapperArrayTest {
+class MapperMongoTest extends MapperTest {
+
+	protected $table = 'test';
 
 	protected static function config()
 	{
