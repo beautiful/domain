@@ -14,7 +14,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 
 	public function testConstruct()
 	{
-		return new Registry_Mock(
+		new Registry_Mock(
 			new Mapper_Array(
 				NULL,
 				array(
@@ -24,8 +24,29 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 				)));
 	}
 
+	public function provideRegistries()
+	{
+		return array(
+			array(new Registry_Mock(
+				new Mapper_Array(
+					NULL,
+					array(
+						array('id' => 0, 'name' => 'Luke', 'automobile' => 'Ford Fiesta'),
+						array('id' => 1, 'name' => 'Dan', 'automobile' => 'Ford Fiesta'),
+						array('id' => 2, 'name' => 'Jack', 'automobile' => 'BMW'),
+					)))),
+			array(new Registry_Mock(array(
+				'Model_User' => new Mapper_Array(
+					NULL,
+					array(
+						array('id' => 0, 'name' => 'Luke', 'automobile' => 'Ford Fiesta'),
+						array('id' => 1, 'name' => 'Dan', 'automobile' => 'Ford Fiesta'),
+						array('id' => 2, 'name' => 'Jack', 'automobile' => 'BMW'),
+					))))));
+	}
+
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testInsert($registry)
 	{
@@ -34,24 +55,27 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 		$user->car('BMW');
 		$registry->persist($user);
 
-		$rows = $registry->mapper()->as_array();
+		$rows = $registry->mapper($user)->as_array();
 		$this->assertSame(
 			$user->__object()->as_array(),
 			end($rows));
 	}
 
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testFind($registry)
 	{
 		$users = $registry->find('Model_User', array('automobile' => 'Ford Fiesta'));
 		$this->assertInstanceOf('Collection_Domain', $users);
-		return $users;
+		
+		$user = $users->current();
+		$this->assertInstanceOf('Model_User', $user);
+		$this->assertSame('Luke', $user->name());
 	}
 
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testFindReturnsEmptyCollectionDomain($registry)
 	{
@@ -61,28 +85,37 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends  testFind
-	 */
-	public function testFindFurther($users)
-	{
-		$user = $users->current();
-		$this->assertInstanceOf('Model_User', $user);
-		$this->assertSame('Luke', $user->name());
-	}
-
-	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testFindOne($registry)
 	{
 		$user = $registry->find_one('Model_User', 2);
 		$this->assertInstanceOf('Model_User', $user);
 		$this->assertSame('Jack', $user->name());
-		return array($registry, $user);
 	}
 
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
+	 */
+	public function testFindSameObject($registry)
+	{
+		$this->assertSame(
+			$registry->find_one('Model_User', 2),
+			$registry->find_one('Model_User', array('name' => 'Jack')));
+	}
+
+	/**
+	 * @dataProvider  provideRegistries
+	 */
+	public function testFindSameObjectSameParams($registry)
+	{
+		$this->assertSame(
+			$registry->find_one('Model_User', 2),
+			$registry->find_one('Model_User', 2));
+	}
+
+	/**
+	 * @dataProvider  provideRegistries
 	 */
 	public function testFindOneReturnsNull($registry)
 	{
@@ -91,7 +124,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testFindOneReturnsExistingObject($registry)
 	{
@@ -104,45 +137,60 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * @depends  testFindOne
+	 * @dataProvider  provideRegistries
 	 */
-	public function testUpdate($registry_user)
+	public function testUpdate($registry)
 	{
-		list($registry, $user) = $registry_user;
+		$user = $registry->find_one('Model_User', 2);
 
 		$user->name('Jacque');
 		$registry->persist($user);
 
-		$row = Arr::get($registry->mapper()->as_array(), 2);
+		$row = Arr::get($registry->mapper($user)->as_array(), 2);
 		$this->assertSame($user->__object()->as_array(), $row);
 	}
 
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testDeleteClassName($registry)
 	{
 		$registry->delete('Model_User', 1);
-		$this->assertFalse(array_key_exists(1, $registry->mapper()->as_array()));
+		$this->assertFalse(array_key_exists(1, $registry->mapper('Model_User')->as_array()));
 	}
 
 	/**
-	 * @depends  testConstruct
+	 * @dataProvider  provideRegistries
 	 */
 	public function testDeleteObject($registry)
 	{
 		$user = $registry->find_one('Model_User', 2);
 		$registry->delete($user);
-		$this->assertFalse(array_key_exists(2, $registry->mapper()->as_array()));
+		$this->assertFalse(array_key_exists(2, $registry->mapper($user)->as_array()));
 	}
 
 	/**
-	 * @depends            testConstruct
+	 * @dataProvider       provideRegistries
 	 * @expectedException  InvalidArgumentException
 	 */
 	public function testDeleteThrowsBadArgumentException($registry)
 	{
 		$registry->delete(1);
+	}
+
+	/**
+	 * @dataProvider  provideRegistries
+	 */
+	public function testRelationsPersisted($registry)
+	{
+		$user = $registry->find_one('Model_User', 2);
+		$bob = new Model_User;
+		$bob->name('Bob');
+		$bob->car('Shitmobile');
+		$user->friend($bob);
+		$registry->persist($user);
+
+		$this->assertTrue(array_key_exists('id', $bob->__object()->as_array()));
 	}
 
 }
