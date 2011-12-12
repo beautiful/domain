@@ -88,6 +88,17 @@ class Registry {
 		$domain = new $class;
 		$domain->__object($object);
 
+		$this->find_relations($domain);
+
+		$this->identities($class)->set($domain);
+
+		return $domain;
+	}
+
+	protected function find_relations(Domain $domain)
+	{
+		$mapper = $this->mapper($domain);
+		
 		foreach ($domain::fields() as $_field)
 		{
 			if ($_field instanceOf Relationship_HasOne)
@@ -103,10 +114,6 @@ class Registry {
 					$this->find_one($relation_class, array($foreign_key => $id));
 			}
 		}
-
-		$this->identities($class)->set($domain);
-
-		return $domain;
 	}
 
 	public function persist(Domain $domain)
