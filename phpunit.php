@@ -39,8 +39,13 @@ class Model_User extends Domain {
 				'accessor' => TRUE,
 				'filters'  => array(
 					array('set', 'ucwords'),
-				))),
+				),
+			)),
 			new Field_Mock('automobile', array('accessor' => 'car')),
+			new Relationship_HasOne('friend', array(
+				'accessor' => TRUE,
+				'domain'   => 'Model_User',
+			)),
 		);
 	}
 

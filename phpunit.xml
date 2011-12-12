@@ -25,11 +25,12 @@
 			<file>test/IdentityMapTest.php</file>
 			<file>test/RegistryTest.php</file>
 			<file>test/AuditTest.php</file>
+			<file>test/RelationshipHasOneTest.php</file>
 		</testsuite>
 	</testsuites>
 	<filter>
 		<whitelist addUncoveredFilesFromWhitelist="true">
-			<directory suffix=".php">classes</directory>
+			<directory suffix=".php">classes</directory>		
 		</whitelist>
 	</filter>
 	<logging>

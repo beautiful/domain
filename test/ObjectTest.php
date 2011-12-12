@@ -64,4 +64,25 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame(50, $data['age']);
 	}
 
+	/**
+	 * @depends  testLoadArray
+	 */
+	public function testAccessor($obj)
+	{
+		$obj->accessor('age', 45);
+		$this->assertSame(45, $obj->accessor('age'));
+	}
+
+	/**
+	 * @depends  testLoadArray
+	 */
+	public function testRelation($obj)
+	{
+		$relationship = new Relationship_HasOne('friend');
+		$user = new Model_User;
+
+		$obj->relation($relationship, $user);
+		$this->assertSame($user, $obj->relation($relationship));
+	}
+
 }

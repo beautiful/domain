@@ -18,9 +18,15 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 	{
 		if ($this->mockObject === NULL)
 		{
+			$friend = new Model_User;
+			$friend->__object(new Object(array(
+				'name' => 'Bob',
+			)));
+
 			$this->mockObject = new Object(array(
 				'name'       => 'Peter',
 				'automobile' => 'Ford Fiesta',
+				'friend'     => $friend,
 			));
 		}
 
@@ -61,30 +67,12 @@ class DomainTest extends PHPUnit_Framework_TestCase {
 		return $model;
 	}
 
-	public function providerFilterValues()
-	{
-		$field = current(Model_User::fields());
-		$filters = $field->filters();
-		$ucwords_filter = $filters[0][1];
-
-		$args = array();
-
-		foreach (array('luke', 'Dan bert', 'Ben', 'jack knows') as $_name)
-		{
-			$args[] = array($_name, call_user_func($ucwords_filter, $_name));
-		}
-		
-		return $args;
-	}
-
 	/**
-	 * @depends       testMagicCall
-	 * @dataProvider  providerFilterValues
+	 * @depends  testMagicCall
 	 */
-	public function testSetFilterApplied($name, $expected, $model)
+	public function testGetHasOneRelation($domain)
 	{
-		$model->name($name);
-		$this->assertSame($expected, $model->name());
+		$this->assertInstanceOf('Model_User', $domain->friend());
 	}
 
 	/**
