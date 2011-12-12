@@ -139,9 +139,10 @@ class Registry {
 
 		foreach ($domain::fields() as $_field)
 		{
-			if ($_field instanceOf Relationship)
+			if ($_field instanceOf Relationship
+				AND $relation = $domain->__object()->{$_field->name()})
 			{
-				$relations[] = array($_field, $domain->__object()->{$_field->name()});
+				$relations[] = array($_field, $relation);
 			}
 		}
 
