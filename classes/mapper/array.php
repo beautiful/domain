@@ -114,7 +114,7 @@ class Mapper_Array extends Mapper {
 		{
 			foreach ($where as $_field => $_value)
 			{
-				if ($_row[$_field] !== $_value)
+				if (Arr::get($_row, $_field) !== $_value)
 				{
 					continue 2;	
 				}
