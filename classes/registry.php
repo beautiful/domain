@@ -177,7 +177,7 @@ class Registry {
 		}
 		else if ($domain instanceof Domain)
 		{
-			$this->mapper()->delete($domain->__object());
+			$this->mapper($domain)->delete($domain->__object());
 			unset($domain);
 		}
 		else
