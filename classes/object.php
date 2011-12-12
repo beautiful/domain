@@ -54,31 +54,15 @@ class Object {
 		$this->data[$field] = $value;
 	}
 
-	protected function filter($filters, $filter, $value)
+	public function accessor($field, $value = NULL)
 	{
-		foreach ($filters as $_filter)
-		{
-			if ($_filter[0] === $filter)
-			{
-				$value = call_user_func($_filter[1], $value);	
-			}
-		}
-
-		return $value;
-	}
-
-	public function accessor(Field $field, $value = NULL)
-	{
-		$name = $field->name();
-		$filters = $field->filters();
-
 		if ($value !== NULL)
 		{
-			$this->{$name} = $this->filter($filters, 'set', $value);
+			$this->{$field} = $value;
 			return;
 		}
 
-		return $this->filter($filters, 'get', $this->{$name});
+		return $this->{$field};
 	}
 
 	public function relation(Relationship $relationship, Domain $domain = NULL)
