@@ -43,22 +43,23 @@ task :inspect do
   print sprintf('%d', metrics['statements'].to_f / metrics['methods'].to_f)
   puts ' per method)'
 
-  print " - #{suite['tests']} tests"
-  print ' with ' if suite['errors'] != '0' or suite['failures'] != '0'
+  print " - #{suite['tests']} tests and "
+  print "#{suite['assertions']} asserts "
+  print 'with ' if suite['errors'] != '0' or suite['failures'] != '0'
 
   if suite['errors'] != '0'
     errors_pc = sprintf('%d', suite['errors'].to_f / suite['tests'].to_f * 100)
-    print errors_pc, '% errors'
+    print errors_pc, '% errors '
   end
 
   print ' and ' if suite['errors'] != '0' and suite['failures'] != '0'
 
   if suite['failures'] != '0'
     failures_pc = sprintf('%d', suite['failures'].to_f / suite['tests'].to_f * 100)
-    print failures_pc, '% failures'
+    print failures_pc, '% failures '
   end
 
-  print ' (in ', sprintf('%.2f', suite['time']), ' seconds)'
+  print '(in ', sprintf('%.2f', suite['time']), ' seconds)'
 
   puts '', ''
   print 'file://', File.realpath(File.join('test', 'coverage', 'index.html'))
