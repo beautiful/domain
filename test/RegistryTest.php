@@ -61,6 +61,24 @@ class RegistryTest extends PHPUnit_Framework_TestCase {
 			end($rows));
 	}
 
+
+	/**
+	 * @dataProvider  provideRegistries
+	 */
+	public function testInsertBlank($registry)
+	{
+		$user = new Model_User;
+		$registry->persist($user);
+
+		$mapper = $registry->mapper($user);
+		$rows = $mapper->as_array();
+		$actual = end($rows);
+		$expected = $user->__object()->as_array();
+
+		$this->assertSame($expected, $actual);
+		$this->assertTrue(isset($actual[$mapper->config('key')]));
+	}
+
 	/**
 	 * @dataProvider  provideRegistries
 	 */
