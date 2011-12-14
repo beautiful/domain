@@ -26,6 +26,9 @@ spl_autoload_register(array('Kohana', 'auto_load'));
 
 I18n::lang('en-gb');
 
+Kohana::$config = new Kohana_Config;
+Kohana::$config->attach(new Config_File);
+
 Kohana::modules(array('beautiful-domain' => __DIR__.'/'));
 
 class Field_Mock extends Field {}
