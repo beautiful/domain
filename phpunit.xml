@@ -27,6 +27,7 @@
 			<file>test/AuditTest.php</file>
 			<file>test/RelationshipTest.php</file>
 			<file>test/RelationshipHasOneTest.php</file>
+			<file>test/RelationshipHasManyTest.php</file>
 			<file>test/MiscTest.php</file>
 		</testsuite>
 	</testsuites>
