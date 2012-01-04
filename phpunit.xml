@@ -25,6 +25,7 @@
 			<file>test/IdentityMapTest.php</file>
 			<file>test/RegistryTest.php</file>
 			<file>test/AuditTest.php</file>
+			<file>test/RelationshipTest.php</file>
 			<file>test/RelationshipHasOneTest.php</file>
 			<file>test/MiscTest.php</file>
 		</testsuite>

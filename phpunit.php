@@ -32,6 +32,7 @@ Kohana::$config->attach(new Config_File);
 Kohana::modules(array('beautiful-domain' => __DIR__.'/'));
 
 class Field_Mock extends Field {}
+class Relationship_Mock extends Relationship {}
 
 class Model_User extends Domain {
 	
